@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,7 +30,7 @@ namespace fnSQL
 
                     string strSQL = "SELECT * FROM vCOVID";
 
-                    if (!(String.IsNullOrEmpty(country)))
+                    if (!string.IsNullOrEmpty(country))
                     {
                         strSQL = strSQL + " WHERE Country = @country";
                         cmd.Parameters.AddWithValue("@country", country);
@@ -44,7 +45,7 @@ namespace fnSQL
                 };
             }
 
-            return new OkObjectResult(result);
+            return new JsonResult(result, new JsonSerializerSettings { Formatting = Newtonsoft.Json.Formatting.Indented });
         }
 
         private static IEnumerable<Dictionary<string, object>> Serialize(SqlDataReader reader)
