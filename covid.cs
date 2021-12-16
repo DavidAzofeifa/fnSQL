@@ -30,7 +30,7 @@ namespace fnSQL
 
                     string strSQL = "SELECT * FROM vCOVID";
 
-                    if (!string.IsNullOrEmpty(country))
+                    if (!(String.IsNullOrEmpty(country)))
                     {
                         strSQL = strSQL + " WHERE Country = @country";
                         cmd.Parameters.AddWithValue("@country", country);
