@@ -37,7 +37,7 @@ namespace fnSQL
                     conn.Open();
                     dataReader = cmd.ExecuteReader();
                     var r = Serialize(dataReader);
-                    json = JsonConvert.SerializeObject(r, Formatting.Indented);
+                    json = JsonConvert.SerializeObject(r);
                 };
 
                 return new HttpResponseMessage(HttpStatusCode.OK)
