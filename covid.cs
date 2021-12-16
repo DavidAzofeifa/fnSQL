@@ -27,9 +27,15 @@ namespace fnSQL
                 {
                     SqlDataReader dataReader;
 
-                    cmd.CommandText = "SELECT * FROM vCOVID WHERE Country = @country";
-                    cmd.Parameters.AddWithValue("@country", country);
+                    string strSQL = "SELECT * FROM vCOVID";
 
+                    if (!(String.IsNullOrEmpty(country)))
+                    {
+                        strSQL = strSQL + " WHERE Country = @country";
+                        cmd.Parameters.AddWithValue("@country", country);
+                    }
+
+                    cmd.CommandText = strSQL;
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = conn;
                     conn.Open();
