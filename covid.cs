@@ -1,48 +1,46 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 
 namespace fnSQL
 {
-    public static class fnSQL
+    public static class covid
     {
-        [FunctionName("fnSQL")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req, ILogger log)
+        [FunctionName("covid")]
+        public static IActionResult Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var connStr = Environment.GetEnvironmentVariable("SynapseServerless");
-            string json = "";
+            string country = req.Query["country"];
+            string connStr = Environment.GetEnvironmentVariable("SynapseServerless");
+            IEnumerable<Dictionary<string, object>> result;
 
             using (SqlConnection conn = new SqlConnection(connStr))
-
             {
                 using (SqlCommand cmd = new SqlCommand())
-
                 {
                     SqlDataReader dataReader;
-                    cmd.CommandText = "SELECT TOP 3 * FROM sys.objects";
+
+                    cmd.CommandText = "SELECT * FROM vCOVID WHERE Country = @country";
+                    cmd.Parameters.AddWithValue("@country", country);
+
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = conn;
                     conn.Open();
                     dataReader = cmd.ExecuteReader();
-                    var r = Serialize(dataReader);
-                    json = JsonConvert.SerializeObject(r, Formatting.Indented);
-                };
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                    result = Serialize(dataReader);
                 };
             }
+
+            return new OkObjectResult(result);
         }
 
         private static IEnumerable<Dictionary<string, object>> Serialize(SqlDataReader reader)
