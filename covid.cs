@@ -22,9 +22,9 @@ namespace fnSQL
             string connStr = Environment.GetEnvironmentVariable("SynapseServerless");
             IEnumerable<Dictionary<string, object>> result;
 
-            using (SqlConnection conn = new SqlConnection(connStr))
+            using (SqlConnection conn = new(connStr))
             {
-                using (SqlCommand cmd = new SqlCommand())
+                using (SqlCommand cmd = new())
                 {
                     SqlDataReader dataReader;
 
@@ -32,7 +32,7 @@ namespace fnSQL
 
                     if (!(String.IsNullOrEmpty(country)))
                     {
-                        strSQL = strSQL + " WHERE Country = @country";
+                        strSQL += " WHERE Country = @country";
                         cmd.Parameters.AddWithValue("@country", country);
                     }
 
