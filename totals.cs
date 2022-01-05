@@ -22,10 +22,10 @@ namespace fnSQL
             var connStr = Environment.GetEnvironmentVariable("SynapseServerless");
             string json = "";
 
-            using (SqlConnection conn = new SqlConnection(connStr))
+            using (SqlConnection conn = new(connStr))
 
             {
-                using (SqlCommand cmd = new SqlCommand())
+                using (SqlCommand cmd = new())
 
                 {
                     SqlDataReader dataReader;
